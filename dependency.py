@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-from random import random
-from math import floor
-
 class Graph:
     def __init__(self, edges={}):
         self.edges = edges
@@ -28,15 +25,24 @@ class Graph:
         unvisited = set(self.edges.keys())
         while unvisited != set():
             root = list(unvisited)[0]
-            topological_order += self.dfs_dep_(root, visited)
+
+            topological_order += self.dfs_dep_(root, visited, current_explore_path=[])
             unvisited -= visited
 
         return topological_order
 
-    def dfs_dep_(self, root, visited):
-        if root in visited:
+    # Current explore path is added to detect cycles.  Any nodes that are on the currently explored path AND are visited again
+    # are on back edges.  That said, visited nodes may be on previously explored path and hence not on the current explored path
+    # and by DFS should already be included in the topological order.
+    def dfs_dep_(self, root, visited, current_explore_path=[]):
+        if root in current_explore_path:
+            # root is on currently explored path
+            raise RuntimeError('Cycle detected')
+        elif root in visited:
+            # root was visited in other paths, so must be included in topological order already, not a cycle.
             return []
         else:
+            # root is unvivisited
             visited.add(root)
 
             if self.edges[root] == []:
@@ -44,7 +50,7 @@ class Graph:
             else:
                 # Python doesn't have fold...
                 topological_order = []
-                for xs in map(lambda x: self.dfs_dep_(x, visited), self.edges[root]):
+                for xs in map(lambda x: self.dfs_dep_(x, visited, current_explore_path + [root]), self.edges[root]):
                     topological_order += xs
 
                 topological_order.append(root)
@@ -54,10 +60,9 @@ class Graph:
 
 def main():
     graph = Graph()
-    graph.edges['D'] = []
     graph.edges['A'] = ['B', 'C']
-    graph.edges['B'] = ['C', 'D']
-    graph.edges['C'] = ['D']
+    graph.edges['B'] = ['C']
+    graph.edges['C'] = []
 
     print(graph.dfs_dep())
 
