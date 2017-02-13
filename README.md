@@ -1,17 +1,17 @@
-# Walkie
+# fun-problems
 
 A collection of interesting problems that I solved while taking a walk.
 
-## Dependency
+- Dependency
 
-## Linear partition
+- Linear partition
 
-## Edit distance
+- Edit distance
 
-## Longest increasing sequence
+- Longest increasing sequence
 
-## Powerset
+- Powerset
 
-## Subset
+- Subset
 
-## Connected Components
+- Connected Components
